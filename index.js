@@ -5,13 +5,11 @@ const PORT=process.env.PORT || 5000;
 const cors=require('cors');
 const {Pool}=require('pg');
 const pool=new Pool({connectionString:process.env.ELEPHANT_SQL_CONNECTION_STRING,})
-
-var conString=process.env.CONNECTION_STRING;
 app.use(express.json());
 app.use(cors());
-var conString=process.env.CONNECTION_STRING;
 
-app.get("/", (req, res) => {
+
+app.get('/', (req, res) => {
   res.send("<h1>Movie API</h1>");
 });
 
