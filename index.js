@@ -1,5 +1,6 @@
 const express=require('express');
 const app=express();
+const {body,validationResult}=require('express-validator');
 require('dotenv').config()
 const PORT=process.env.PORT || 5000;
 const cors=require('cors');
@@ -36,7 +37,16 @@ app.get('/api/movies/:id',(req,res)=>{
     })
     .catch((e)=>res.status(500).json({message:e.message}))
 });
-app.post('/api/movies',(req,res)=>{
+app.post('/api/movies',
+body('title').trim().notEmpty().withMessage('Title Must not be empty!'),
+body('year').isNumeric().withMessage('Please enter only Numeric value'),
+body('rating').isNumeric().withMessage('Please enter only Numeric value'),
+(req,res)=>{
+  const errors=validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json({errors:errors.array()});
+  }
+ 
   const {title,director,year,rating,poster,synopsis}=req.body;
   pool.query(
     "INSERT INTO movies(title,director,year,rating,poster,synopsis) VALUES($1,$2,$3,$4,$5,$6) RETURNING *;",[title,director,year,rating,poster,synopsis]
@@ -47,8 +57,16 @@ app.post('/api/movies',(req,res)=>{
   })
   .catch((e)=>res.status(500).json({message:e.message}));
 });
-app.put('/api/movies/:id',(req,res)=>{
+app.put('/api/movies/:id',
+body('title').trim().notEmpty().withMessage('Title Must not be empty!'),
+body('year').isNumeric().withMessage('Please enter only Numeric value'),
+body('rating').isNumeric().withMessage('Please enter only Numeric value'),
+(req,res)=>{
   const id=req.params.id;
+  const errors=validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json({errors:errors.array()});
+  }
   const {title,director,year,rating,poster,synopsis}=req.body;
   console.log(title);
   pool
